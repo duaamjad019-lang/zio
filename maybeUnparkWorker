@@ -1,0 +1,8 @@
+// In ZScheduler.scala
+private def maybeUnparkWorker(worker: Worker): Unit = {
+  // Pass the thread directly to avoid lookup overhead
+  unparkStrategy.maybeUnparkWorker(worker.workerId, worker.thread)
+}
+
+// Update OptimizedWorkerWakeup to accept Thread in maybeUnparkWorker
+// def maybeUnparkWorker(workerId: Int, thread: Thread, isUrgent: Boolean = false)
