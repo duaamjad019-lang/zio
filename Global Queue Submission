@@ -1,0 +1,9 @@
+private def offerToGlobalQueue(fiber: Fiber): Unit = {
+  queue.offer(fiber)
+  val worker = selectIdleWorker()
+  if (worker != null) {
+    // Determine urgency based on fiber type if needed
+    val isUrgent = fiber.isInterrupted || fiber.priority == Priority.High
+    maybeUnparkWorker(worker, isUrgent)
+  }
+}
