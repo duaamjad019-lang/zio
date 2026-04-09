@@ -1,0 +1,24 @@
+// In ZScheduler.scala
+private val unparkStrategy = new OptimizedWorkerWakeup(capacity)
+
+// Inside Worker class definition
+private class Worker(private val workerId: Int) extends Runnable {
+  val thread = Thread.currentThread()
+  
+  // Register thread reference for unpark capability
+  unparkStrategy.registerWorker(workerId, thread) 
+  
+  def run(): Unit = {
+    while (running) {
+      // ... work processing ...
+      
+      if (queue.isEmpty()) {
+        // Mark as parked BEFORE parking
+        unparkStrategy.beforePark(workerId)
+        LockSupport.park()
+        // Mark as active AFTER waking
+        unparkStrategy.afterUnpark(workerId)
+      }
+    }
+  }
+}
